@@ -3,7 +3,7 @@ use rand::{thread_rng, Rng};
 
 const SLOGANS: [&'static str; 3] = [
     "If not us, then who?",
-    "Malware you can trust",
+    "Bad actor you can trust",
     "All your base belong to us",
 ];
 
