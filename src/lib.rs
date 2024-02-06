@@ -2,7 +2,7 @@ use colored::Colorize;
 use rand::{thread_rng, Rng};
 
 #[cfg(feature = "duplex")]
-mod duplex;
+pub mod duplex;
 
 const SLOGANS: [&'static str; 3] = [
     "If not us, then who?",
