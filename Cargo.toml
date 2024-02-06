@@ -8,3 +8,14 @@ edition = "2021"
 [dependencies]
 colored = "2.0.4"
 rand = "0.8.5"
+tokio = { version = "1.36.0", default-features = false, features = ["sync"], optional = true }
+
+
+[dev-dependencies]
+tokio = { version = "1.36.0", default-features = false, features = ["sync", "rt", "macros"] }
+
+
+
+
+[features]
+duplex = ["dep:tokio"]
