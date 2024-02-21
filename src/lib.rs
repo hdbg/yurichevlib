@@ -4,6 +4,16 @@ use rand::{thread_rng, Rng};
 #[cfg(feature = "duplex")]
 pub mod duplex;
 
+#[cfg(feature = "proxy_socket")]
+#[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
+pub struct Socks5Proxy{
+    pub addr: String,
+    pub port: u16,
+    pub creds: Option<(String, String)>,
+}
+// #[cfg(feature = "proxy_socket")]
+pub mod proxy_socket;
+
 const SLOGANS: [&'static str; 3] = [
     "If not us, then who?",
     "Bad actor you can trust",
