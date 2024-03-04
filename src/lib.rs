@@ -1,23 +1,24 @@
-use colored::Colorize;
-use rand::{thread_rng, Rng};
+use colored::{Color, Colorize};
+use rand::{seq::SliceRandom, thread_rng, Rng};
 
 #[cfg(feature = "duplex")]
 pub mod duplex;
 
 #[cfg(feature = "proxy_socket")]
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
-pub struct Socks5Proxy{
+pub struct Socks5Proxy {
     pub addr: String,
     pub port: u16,
     pub creds: Option<(String, String)>,
 }
-// #[cfg(feature = "proxy_socket")]
+#[cfg(feature = "proxy_socket")]
 pub mod proxy_socket;
 
-const SLOGANS: [&'static str; 3] = [
+const SLOGANS: [&'static str; 4] = [
     "If not us, then who?",
     "Bad actor you can trust",
     "All your base belong to us",
+    "Play with us, or lose the game",
 ];
 
 pub fn print_logo() {
@@ -29,7 +30,17 @@ pub fn print_logo() {
     const LOGO: &str = include_str!("logo.txt");
     let logo_longest_line = LOGO.split("\n").map(|x| x.len()).max().unwrap();
 
-    println!("{}", LOGO.magenta());
+    let colors = vec![
+        Color::Red,
+        Color::Yellow,
+        Color::Blue,
+        Color::Magenta,
+        Color::Cyan,
+    ];
+
+    let current_color = colors.choose(&mut rng).unwrap();
+
+    println!("{}", LOGO.color(current_color.clone()));
     println!(
         "{}{}",
         " ".repeat(logo_longest_line - copyright.len()),
