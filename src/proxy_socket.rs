@@ -147,19 +147,17 @@ async fn connect_http_proxy(
     domain: &'static str,
     port: u16,
 ) -> Result<tokio::net::TcpStream, SocketConnectError> {
-    let addr = url::Url::from_str(&proxy.addr).context(UrlParseSnafu)?;
-
-    let host = addr.host().ok_or(HostIsNotPresentSnafu.build())?;
-    let host = match host {
-        url::Host::Domain(domain) => {
-            let resolved_ip = tokio::net::lookup_host(format!("{}:{}", domain.to_string(), port))
-                .await
-                .context(TokioSnafu)?
-                .next()
-                .ok_or(HostIsNotPresentSnafu.build())?;
+    let host = match proxy.addr.chars().any(char::is_alphabetic) {
+        true => {
+            let resolved_ip =
+                tokio::net::lookup_host(format!("{}:{}", proxy.addr.to_string(), proxy.port))
+                    .await
+                    .context(TokioSnafu)?
+                    .next()
+                    .ok_or(HostIsNotPresentSnafu.build())?;
             resolved_ip.to_string()
         }
-        url::Host::Ipv4(addr) => addr.to_string(),
+        false => proxy.addr.to_string(),
         _ => todo!(),
     };
 
