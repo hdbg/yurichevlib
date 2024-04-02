@@ -149,12 +149,11 @@ async fn connect_http_proxy(
 ) -> Result<tokio::net::TcpStream, SocketConnectError> {
     let host = match proxy.addr.chars().any(char::is_alphabetic) {
         true => {
-            let resolved_ip =
-                tokio::net::lookup_host(format!("{}:{}", proxy.addr.to_string(), proxy.port))
-                    .await
-                    .context(TokioSnafu)?
-                    .next()
-                    .ok_or(HostIsNotPresentSnafu.build())?;
+            let resolved_ip = tokio::net::lookup_host(format!("{}", proxy.addr.to_string()))
+                .await
+                .context(TokioSnafu)?
+                .next()
+                .ok_or(HostIsNotPresentSnafu.build())?;
             resolved_ip.to_string()
         }
         false => proxy.addr.to_string(),
