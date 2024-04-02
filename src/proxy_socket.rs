@@ -161,7 +161,7 @@ async fn connect_http_proxy(
         _ => todo!(),
     };
 
-    let mut stream = tokio::net::TcpStream::connect(format!("{}:{}", addr, proxy.port))
+    let mut stream = tokio::net::TcpStream::connect(format!("{}:{}", host, proxy.port))
         .await
         .context(TokioSnafu)?;
 
