@@ -6,7 +6,17 @@ pub mod duplex;
 
 #[cfg(feature = "proxy_socket")]
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
-pub struct Socks5Proxy {
+pub enum ProxyKind {
+    Socks5,
+    Socks4,
+    Http,
+    Https,
+}
+
+#[cfg(feature = "proxy_socket")]
+#[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
+pub struct Proxy {
+    pub kind: ProxyKind,
     pub addr: String,
     pub port: u16,
     pub creds: Option<(String, String)>,

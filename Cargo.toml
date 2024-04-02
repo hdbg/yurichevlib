@@ -1,11 +1,12 @@
 [package]
 name = "yurichevlib"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-http-proxy = { version = "1.2.5", optional = true, features = ["basic-auth", "tokio", "runtime-tokio"] }
 async-tungstenite = { version = "0.25.0", features = [
     "tokio-rustls-webpki-roots",
 ], optional = true }
@@ -55,4 +56,6 @@ proxy_socket = [
     "dep:rustls",
     "dep:serde",
     "dep:rustls-pki-types",
+    "dep:async-http-proxy"
 ]
+async-http-proxy = ["dep:async-http-proxy"]
