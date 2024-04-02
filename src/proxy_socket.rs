@@ -1,4 +1,3 @@
-
 type TokioWsNoProxy = WebSocketStream<
     async_tungstenite::stream::Stream<
         TokioAdapter<tokio::net::TcpStream>,
@@ -49,6 +48,12 @@ pub enum SocketConnectError {
 
     #[snafu(display("tokio failed connecting tunnel"))]
     Tokio { source: std::io::Error },
+
+    #[snafu(display("proxy address parse failed"))]
+    UrlParse { source: url::ParseError },
+
+    #[snafu(display("proxy host is not present"))]
+    HostIsNotPresent,
 }
 
 pub enum MaybeProxySocket {
@@ -136,12 +141,29 @@ impl MaybeProxySocket {
     }
 }
 
+use core::str::FromStr;
 async fn connect_http_proxy(
     proxy: super::Proxy,
     domain: &'static str,
     port: u16,
 ) -> Result<tokio::net::TcpStream, SocketConnectError> {
-    let mut stream = tokio::net::TcpStream::connect(format!("{}:{}", proxy.addr, proxy.port))
+    let addr = url::Url::from_str(&proxy.addr).context(UrlParseSnafu)?;
+
+    let host = addr.host().ok_or(HostIsNotPresentSnafu.build())?;
+    let host = match host {
+        url::Host::Domain(domain) => {
+            let resolved_ip = tokio::net::lookup_host(format!("{}:{}", domain.to_string(), port))
+                .await
+                .context(TokioSnafu)?
+                .next()
+                .ok_or(HostIsNotPresentSnafu.build())?;
+            resolved_ip.to_string()
+        }
+        url::Host::Ipv4(addr) => addr.to_string(),
+        _ => todo!(),
+    };
+
+    let mut stream = tokio::net::TcpStream::connect(format!("{}:{}", addr, proxy.port))
         .await
         .context(TokioSnafu)?;
 

@@ -23,6 +23,7 @@ tokio = { version = "1.36.0", default-features = false, features = [
     "net",
 ], optional = true }
 tokio-rustls = { version = "0.25.0", optional = true }
+url = { version = "2.5.0", optional = true }
 webpki-roots = { version = "0.26.1", optional = true }
 
 
@@ -56,6 +57,6 @@ proxy_socket = [
     "dep:rustls",
     "dep:serde",
     "dep:rustls-pki-types",
-    "dep:async-http-proxy"
+    "dep:async-http-proxy",
+    "dep:url",
 ]
-async-http-proxy = ["dep:async-http-proxy"]
