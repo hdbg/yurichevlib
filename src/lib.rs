@@ -30,6 +30,32 @@ impl FromStr for ProxyKind {
 }
 
 #[cfg(feature = "proxy_socket")]
+impl std::fmt::Display for ProxyKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        f.write_str(match self {
+            Self::Socks4 => "socks4",
+            Self::Socks5 => "socks5",
+            Self::Http => "http",
+            Self::Https => "https",
+        })
+    }
+}
+
+#[cfg(feature = "proxy_socket")]
+impl std::fmt::Display for Proxy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        self.kind.fmt(f)?;
+        f.write_fmt(format_args!(":{}:{}", self.addr, self.port))?;
+
+        if let Some(ref creds) = self.creds {
+            f.write_fmt(format_args!(":{}:{}", creds.0, creds.1))?;
+        }
+
+        Ok(())
+    }
+}
+
+#[cfg(feature = "proxy_socket")]
 #[derive(Debug, snafu::Snafu)]
 pub enum ProxyParseError {
     #[snafu(display("Verify correctness on proxy parts"))]
